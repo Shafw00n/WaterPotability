@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block title %}Evaluasi Model & Komparasi Jurnal - AquaSense AI{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Header -->
+  <div style="margin-bottom: 2.5rem;">
+    <h1 class="section-title"><i class="fa-solid fa-chart-pie" style="color: var(--primary);"></i> Evaluasi Model & Komparasi Jurnal Ilmiah</h1>
+    <p class="section-subtitle">
+      Evaluasi holdout untuk memenuhi kriteria UTS, dilengkapi evaluasi 5-fold sebagai pembanding protokol jurnal. Metrik yang ditampilkan adalah Accuracy, Precision, Recall, dan F1-Score.
+    </p>
+  </div>
+
+  <!-- Performance Comparison Summary Cards -->
+  <div class="grid-2 section">
+    <!-- Decision Tree Card -->
+    <div class="glass-card" style="border-top: 4px solid var(--primary);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h3 style="color: var(--text-main); font-size: 1.25rem;">
+          <i class="fa-solid fa-tree" style="color: var(--primary);"></i> Decision Tree — holdout 80:20
+        </h3>
+        <span class="badge badge-info">Model Utama UTS</span>
+      </div>
+
+      <div class="grid-2" style="gap: 0.75rem; margin-bottom: 1.25rem;">
+        <div style="background: #f8fafc; padding: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); text-align: center;">
+          <div style="font-size: 1.6rem; font-weight: 800; color: #0369a1;">{{ metrics.decision_tree.accuracy }}%</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);">Accuracy (Akurasi)</div>
+        </div>
+        <div style="background: #f8fafc; padding: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); text-align: center;">
+          <div style="font-size: 1.6rem; font-weight: 800; color: #15803d;">{{ metrics.decision_tree.precision }}%</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);">Precision (Presisi)</div>
+        </div>
+        <div style="background: #f8fafc; padding: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); text-align: center;">
+          <div style="font-size: 1.6rem; font-weight: 800; color: #be123c;">{{ metrics.decision_tree.recall }}%</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);">Recall (Sensitivitas)</div>
+        </div>
+        <div style="background: #f8fafc; padding: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); text-align: center;">
+          <div style="font-size: 1.6rem; font-weight: 800; color: #6d28d9;">{{ metrics.decision_tree.f1_score }}%</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);">F1-Score</div>
+        </div>
+      </div>
+      <img src="{{ url_for('static', filename='img/confusion_matrix_dt.png') }}" alt="Confusion Matrix Decision Tree" class="img-showcase">
+      <div style="margin-top: 0.8rem; font-size: 0.82rem; color: var(--text-muted); text-align: center;">
+        True Negative (TN): <strong>{{ metrics.decision_tree.confusion_matrix.tn }}</strong> | False Positive (FP): <strong>{{ metrics.decision_tree.confusion_matrix.fp }}</strong> | False Negative (FN): <strong>{{ metrics.decision_tree.confusion_matrix.fn }}</strong> | True Positive (TP): <strong>{{ metrics.decision_tree.confusion_matrix.tp }}</strong>
+      </div>
+    </div>
+
+    <!-- Multilayer Perceptron Card -->
+    <div class="glass-card" style="border-top: 4px solid var(--secondary);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h3 style="color: var(--text-main); font-size: 1.25rem;">
+          <i class="fa-solid fa-network-wired" style="color: var(--secondary);"></i> MLP — holdout 80:20
+        </h3>
+        <span class="badge badge-success">Model Pembanding</span>
+      </div>
+
+      <div class="grid-2" style="gap: 0.75rem; margin-bottom: 1.25rem;">
+        <div style="background: #f8fafc; padding: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); text-align: center;">
+          <div style="font-size: 1.6rem; font-weight: 800; color: #0369a1;">{{ metrics.multilayer_perceptron.accuracy }}%</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);">Accuracy (Akurasi)</div>
+        </div>
+        <div style="background: #f8fafc; padding: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); text-align: center;">
+          <div style="font-size: 1.6rem; font-weight: 800; color: #15803d;">{{ metrics.multilayer_perceptron.precision }}%</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);">Precision (Presisi)</div>
+        </div>
+        <div style="background: #f8fafc; padding: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); text-align: center;">
+          <div style="font-size: 1.6rem; font-weight: 800; color: #be123c;">{{ metrics.multilayer_perceptron.recall }}%</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);">Recall (Sensitivitas)</div>
+        </div>
+        <div style="background: #f8fafc; padding: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); text-align: center;">
+          <div style="font-size: 1.6rem; font-weight: 800; color: #6d28d9;">{{ metrics.multilayer_perceptron.f1_score }}%</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);">F1-Score</div>
+        </div>
+      </div>
+
+      <img src="{{ url_for('static', filename='img/confusion_matrix_mlp.png') }}" alt="Confusion Matrix MLP" class="img-showcase">
+      <div style="margin-top: 0.8rem; font-size: 0.82rem; color: var(--text-muted); text-align: center;">
+        True Negative (TN): <strong>{{ metrics.multilayer_perceptron.confusion_matrix.tn }}</strong> | False Positive (FP): <strong>{{ metrics.multilayer_perceptron.confusion_matrix.fp }}</strong> | False Negative (FN): <strong>{{ metrics.multilayer_perceptron.confusion_matrix.fn }}</strong> | True Positive (TP): <strong>{{ metrics.multilayer_perceptron.confusion_matrix.tp }}</strong>
+      </div>
+    </div>
+  </div>
+  <p class="section-subtitle" style="margin: -1.5rem 0 2.5rem;">
+    Angka pada kartu dan confusion matrix adalah hasil data testing yang tidak dipakai melatih model. Tabel perbandingan di bawah melaporkan rerata ± simpangan baku dari lima fold; hasil ini tambahan dan tidak menggantikan evaluasi holdout yang diminta UTS.
+  </p>
+  <div class="glass-card" style="margin-bottom: 2rem; border-left: 4px solid var(--warning);">
+    <strong>Catatan interpretasi:</strong> akurasi baseline yang selalu memilih kelas mayoritas ({{ metrics.majority_class_baseline.class }}) pada data testing adalah {{ metrics.majority_class_baseline.accuracy }}%. Karena itu, nilai akurasi model perlu dibaca bersama precision, recall, F1-score, dan confusion matrix.
+  </div>
+  <div class="glass-card" style="margin-bottom: 2rem;">
+    Pada data testing, Decision Tree melewatkan {{ metrics.decision_tree.confusion_matrix.fn }} dari {{ metrics.decision_tree.confusion_matrix.fn + metrics.decision_tree.confusion_matrix.tp }} sampel berlabel Potability=1; MLP melewatkan {{ metrics.multilayer_perceptron.confusion_matrix.fn }} dari {{ metrics.multilayer_perceptron.confusion_matrix.fn + metrics.multilayer_perceptron.confusion_matrix.tp }}. Ini menunjukkan mengapa akurasi saja tidak cukup.
+  </div>
+
+  <!-- Feature Importance Card -->
+  <section class="section">
+    <div class="glass-card">
+      <h3 style="font-size: 1.3rem; color: var(--text-main); margin-bottom: 0.5rem;">
+        <i class="fa-solid fa-ranking-star" style="color: var(--primary);"></i> Analisis Fitur Paling Berpengaruh (Feature Importance)
+      </h3>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        Berdasarkan pembagian simpul pada Decision Tree, berikut adalah kontribusi relatif setiap parameter dalam membedakan air layak minum dan tidak layak:
+      </p>
+      <div style="max-width: 800px; margin: 0 auto;">
+        <img src="{{ url_for('static', filename='img/feature_importance.png') }}" alt="Feature Importance" class="img-showcase">
+      </div>
+    </div>
+  </section>
+
+  <!-- Side-by-Side Journal Comparison Table (Essential UTS Requirement) -->
+  <section class="section">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title"><i class="fa-solid fa-scale-balanced" style="color: var(--warning);"></i> Tabel Komparasi Proyek vs. Artikel Jurnal Ilmiah</h2>
+        <p class="section-subtitle">Perbandingan angka memakai metrik 5-fold untuk proyek dan jurnal. Rincian preprocessing dan konfigurasi jurnal dapat berbeda, jadi hasilnya bukan eksperimen yang sepenuhnya identik.</p>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table-custom">
+        <thead>
+          <tr>
+            <th>Parameter Evaluasi</th>
+            <th>Hasil Penelitian Jurnal (Zaky et al., 2023)</th>
+            <th>Proyek: Decision Tree (5-fold)</th>
+            <th>Proyek: MLP (5-fold, tambahan)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Dataset yang Digunakan</strong></td>
+            <td>Kaggle Water Quality and Potability</td>
+            <td>Kaggle Water Quality and Potability</td>
+            <td>Kaggle Water Quality and Potability</td>
+          </tr>
+          <tr>
+            <td><strong>Skema Pembagian Data</strong></td>
+            <td>5-Fold Cross Validation (menurut artikel)</td>
+            <td>Stratified 5-fold Cross Validation</td>
+            <td>Stratified 5-fold Cross Validation</td>
+          </tr>
+          <tr>
+            <td><strong>Penanganan Missing Value</strong></td>
+            <td>Ikuti keterangan preprocessing pada artikel</td>
+            <td>Median imputation di dalam setiap fold</td>
+            <td>Median imputation dan StandardScaler di dalam setiap fold</td>
+          </tr>
+          <tr>
+            <td><strong>Akurasi (Accuracy)</strong></td>
+            <td><span class="badge badge-info">{{ metrics.journal_reference.accuracy }}%</span></td>
+            <td><strong>{{ metrics.decision_tree.cross_validation.accuracy.mean }}% ± {{ metrics.decision_tree.cross_validation.accuracy.std }}%</strong></td>
+            <td><strong>{{ metrics.multilayer_perceptron.cross_validation.accuracy.mean }}% ± {{ metrics.multilayer_perceptron.cross_validation.accuracy.std }}%</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Presisi (Precision)</strong></td>
+            <td>{{ metrics.journal_reference.precision }}%</td>
+            <td><strong>{{ metrics.decision_tree.cross_validation.precision.mean }}% ± {{ metrics.decision_tree.cross_validation.precision.std }}%</strong></td>
+            <td><strong>{{ metrics.multilayer_perceptron.cross_validation.precision.mean }}% ± {{ metrics.multilayer_perceptron.cross_validation.precision.std }}%</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Recall (Sensitivitas)</strong></td>
+            <td>{{ metrics.journal_reference.recall }}%</td>
+            <td><strong>{{ metrics.decision_tree.cross_validation.recall.mean }}% ± {{ metrics.decision_tree.cross_validation.recall.std }}%</strong></td>
+            <td><strong>{{ metrics.multilayer_perceptron.cross_validation.recall.mean }}% ± {{ metrics.multilayer_perceptron.cross_validation.recall.std }}%</strong></td>
+          </tr>
+          <tr>
+            <td><strong>F1-Score</strong></td>
+            <td>{{ metrics.journal_reference.f1_score }}%</td>
+            <td><strong>{{ metrics.decision_tree.cross_validation.f1_score.mean }}% ± {{ metrics.decision_tree.cross_validation.f1_score.std }}%</strong></td>
+            <td><strong>{{ metrics.multilayer_perceptron.cross_validation.f1_score.mean }}% ± {{ metrics.multilayer_perceptron.cross_validation.f1_score.std }}%</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Qualitative Analysis (Persamaan, Perbedaan, Penyebab) -->
+  <section class="section">
+    <div class="glass-card">
+      <h2 style="font-size: 1.35rem; color: var(--text-main); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.6rem;">
+        <i class="fa-solid fa-file-pen" style="color: var(--primary);"></i> Pembahasan Akademik: Persamaan, Perbedaan, & Penyebab
+      </h2>
+
+      <!-- 1. Persamaan -->
+      <div style="margin-bottom: 1.5rem;">
+        <h4 style="color: var(--primary); font-size: 1.05rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+          <i class="fa-solid fa-check"></i> 1. Persamaan Penelitian
+        </h4>
+        <ul style="padding-left: 1.5rem; font-size: 0.9rem; color: #475569; display: flex; flex-direction: column; gap: 0.35rem;">
+          {% for item in metrics.comparison_analysis.persamaan %}
+          <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- 2. Perbedaan -->
+      <div style="margin-bottom: 1.5rem;">
+        <h4 style="color: var(--secondary); font-size: 1.05rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+          <i class="fa-solid fa-code-compare"></i> 2. Perbedaan Metodologi & Implementasi
+        </h4>
+        <ul style="padding-left: 1.5rem; font-size: 0.9rem; color: #475569; display: flex; flex-direction: column; gap: 0.35rem;">
+          {% for item in metrics.comparison_analysis.perbedaan %}
+          <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- 3. Kemungkinan Penyebab Perbedaan Hasil -->
+      <div>
+        <h4 style="color: var(--warning); font-size: 1.05rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+          <i class="fa-solid fa-magnifying-glass-chart"></i> 3. Kemungkinan Penyebab Perbedaan Hasil Akurasi
+        </h4>
+        <ul style="padding-left: 1.5rem; font-size: 0.9rem; color: #475569; display: flex; flex-direction: column; gap: 0.35rem;">
+          {% for item in metrics.comparison_analysis.penyebab_perbedaan %}
+          <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

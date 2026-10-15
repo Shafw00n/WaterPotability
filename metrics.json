@@ -1,0 +1,184 @@
+{
+  "dataset": {
+    "total_rows": 3276,
+    "total_cols": 10,
+    "features": [
+      "ph",
+      "Hardness",
+      "Solids",
+      "Chloramines",
+      "Sulfate",
+      "Conductivity",
+      "Organic_carbon",
+      "Trihalomethanes",
+      "Turbidity"
+    ],
+    "train_count": 2620,
+    "test_count": 656,
+    "missing_stats": {
+      "ph": 491,
+      "Hardness": 0,
+      "Solids": 0,
+      "Chloramines": 0,
+      "Sulfate": 781,
+      "Conductivity": 0,
+      "Organic_carbon": 0,
+      "Trihalomethanes": 162,
+      "Turbidity": 0,
+      "Potability": 0
+    },
+    "class_distribution": {
+      "0": 1998,
+      "1": 1278
+    },
+    "class_percentages": {
+      "0": 60.99,
+      "1": 39.01
+    }
+  },
+  "majority_class_baseline": {
+    "class": 0,
+    "accuracy": 60.98
+  },
+  "decision_tree": {
+    "accuracy": 63.57,
+    "precision": 58.76,
+    "recall": 22.27,
+    "f1_score": 32.29,
+    "cross_validation": {
+      "accuracy": {
+        "mean": 63.1,
+        "std": 0.98
+      },
+      "precision": {
+        "mean": 56.86,
+        "std": 4.47
+      },
+      "recall": {
+        "mean": 24.65,
+        "std": 5.92
+      },
+      "f1_score": {
+        "mean": 33.84,
+        "std": 5.31
+      }
+    },
+    "confusion_matrix": {
+      "tn": 360,
+      "fp": 40,
+      "fn": 199,
+      "tp": 57
+    },
+    "feature_importance": {
+      "Conductivity": 0.0,
+      "Organic_carbon": 0.0106,
+      "Turbidity": 0.0351,
+      "Solids": 0.054,
+      "Trihalomethanes": 0.0715,
+      "Chloramines": 0.1282,
+      "Hardness": 0.1363,
+      "ph": 0.2577,
+      "Sulfate": 0.3066
+    }
+  },
+  "multilayer_perceptron": {
+    "accuracy": 60.67,
+    "precision": 49.59,
+    "recall": 46.88,
+    "f1_score": 48.19,
+    "cross_validation": {
+      "accuracy": {
+        "mean": 62.61,
+        "std": 2.64
+      },
+      "precision": {
+        "mean": 52.35,
+        "std": 3.76
+      },
+      "recall": {
+        "mean": 50.31,
+        "std": 1.94
+      },
+      "f1_score": {
+        "mean": 51.26,
+        "std": 2.38
+      }
+    },
+    "confusion_matrix": {
+      "tn": 278,
+      "fp": 122,
+      "fn": 136,
+      "tp": 120
+    }
+  },
+  "comparison_analysis": {
+    "persamaan": [
+      "Menggunakan dataset kualitas dan kelayakan air (Water Quality and Potability Dataset) yang bersumber dari repositori Kaggle.",
+      "Menggunakan 9 atribut parameter fisik dan kimiawi air yang sama persis (ph, Hardness, Solids, Chloramines, Sulfate, Conductivity, Organic_carbon, Trihalomethanes, Turbidity) dengan target biner Potability (0 = Tidak Layak, 1 = Layak).",
+      "Menerapkan algoritma Decision Tree Classifier untuk pemodelan klasifikasi data.",
+      "Mengevaluasi kinerja model menggunakan metrik standar Accuracy, Precision, Recall, dan F1-Score/F-Measure melalui kerangka Confusion Matrix."
+    ],
+    "perbedaan": [
+      "Skema Evaluasi: Hasil utama proyek menggunakan holdout terstratifikasi 80:20 (Decision Tree akurasi 63.57%; MLP 60.67%). Sebagai pembanding tambahan dengan protokol 5-fold jurnal, proyek juga menghitung cross-validation terstratifikasi pada seluruh dataset (Decision Tree akurasi rata-rata 63.1%; MLP 62.61%). Perbandingan tetap tidak sepenuhnya setara karena rincian preprocessing dan konfigurasi model jurnal dapat berbeda.",
+      "Penanganan Missing Values: Tabel dataset pada artikel mencatat 'Missing values: No', sedangkan berkas CSV proyek berisi nilai kosong pada ph, Sulfate, dan Trihalomethanes. Proyek mengisi nilai kosong dengan median yang dihitung hanya dari bagian training (atau bagian training fold pada cross-validation).",
+      "Konfigurasi Model: Decision Tree menggunakan criterion entropy, max_depth=6, min_samples_split=10, dan min_samples_leaf=5. Model pembanding MLP menggunakan dua hidden layer berukuran (64, 32) serta StandardScaler. Kedua model dilatih dengan data dan parameter proyek.",
+      "Implementasi: Artikel melaporkan hasil analitis, sedangkan proyek menyediakan form dan endpoint Flask untuk menguji data baru. Status deployment publik harus dibuktikan dengan URL aktif; keberadaan konfigurasi deployment saja belum membuktikan aplikasi sudah online."
+    ],
+    "penyebab_perbedaan": [
+      "Perbedaan strategi validasi, imputasi, dan parameter model dapat mengubah skor; karena eksperimen tidak mengisolasi satu faktor, selisih skor tidak membuktikan bahwa satu preprocessing atau konfigurasi menjadi penyebab peningkatan.",
+      "Decision Tree dan MLP memiliki karakteristik berbeda. Pada holdout proyek, akurasi saja tidak cukup: recall kelas Potability=1 juga perlu dilihat agar sampel positif yang terlewat terlihat.",
+      "Dataset tidak seimbang (sekitar 61% kelas 0 dan 39% kelas 1), sehingga akurasi perlu ditafsirkan bersama precision, recall, F1-score, dan confusion matrix."
+    ]
+  },
+  "journal_reference": {
+    "title": "Performance Analysis of the Decision Tree Classification Algorithm on the Water Quality and Potability Dataset",
+    "authors": "Umar Zaky, Ahmad Naswin, Sumiyatun, Aris Wahyu Murdiyanto",
+    "journal": "Indonesian Journal of Data and Science (IJODAS)",
+    "year": 2023,
+    "volume": "Vol. 4, No. 3, Hal. 145-150",
+    "doi": "https://doi.org/10.56705/ijodas.v4i3.113",
+    "dataset_link": "https://www.kaggle.com/datasets/uom190346a/water-quality-and-potability",
+    "method": "Decision Tree (5-Fold Cross Validation)",
+    "accuracy": 54.33,
+    "precision": 55.0,
+    "recall": 54.4,
+    "f1_score": 54.7,
+    "fold_details": [
+      {
+        "fold": "K-1",
+        "accuracy": 54.8,
+        "precision": 54.2,
+        "recall": 55.1,
+        "f1": 55.5
+      },
+      {
+        "fold": "K-2",
+        "accuracy": 52.5,
+        "precision": 54.1,
+        "recall": 52.5,
+        "f1": 52.3
+      },
+      {
+        "fold": "K-3",
+        "accuracy": 57.4,
+        "precision": 57.5,
+        "recall": 56.7,
+        "f1": 56.2
+      },
+      {
+        "fold": "K-4",
+        "accuracy": 52.3,
+        "precision": 52.1,
+        "recall": 51.4,
+        "f1": 53.4
+      },
+      {
+        "fold": "K-5",
+        "accuracy": 54.5,
+        "precision": 56.8,
+        "recall": 56.0,
+        "f1": 56.6
+      }
+    ]
+  }
+}

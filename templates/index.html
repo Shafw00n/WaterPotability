@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Beranda - AquaSense AI Klasifikasi Kelayakan Air Minum{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-pill">
+      <i class="fa-solid fa-sparkles"></i> Proyek Ujian Tengah Semester Kecerdasan Buatan 2026
+    </div>
+    <h1 class="hero-title">
+      Klasifikasi Kelayakan Air Minum Berbasis <span class="hero-highlight">Decision Tree</span> & <span class="hero-highlight">MLP</span>
+    </h1>
+    <p class="hero-desc">
+      Model klasifikasi yang memprediksi label Potability (0 atau 1) dari 9 parameter kualitas air pada dataset. Hasilnya untuk pembelajaran, bukan pengganti pengujian laboratorium atau sertifikasi air minum.
+    </p>
+    <div class="hero-actions">
+      <a href="{{ url_for('predict') }}" class="btn btn-primary">
+        <i class="fa-solid fa-flask-vial"></i> Uji Data Baru Sekarang
+      </a>
+      <a href="{{ url_for('evaluasi') }}" class="btn btn-secondary">
+        <i class="fa-solid fa-chart-line"></i> Lihat Hasil Evaluasi & Komparasi Jurnal
+      </a>
+    </div>
+  </section>
+
+  <!-- Key Statistics Grid -->
+  <div class="stats-grid">
+    <div class="glass-card stat-card">
+      <div class="stat-icon cyan">
+        <i class="fa-solid fa-database"></i>
+      </div>
+      <div>
+        <div class="stat-val">{{ "{:,}".format(metrics.dataset.total_rows) }}</div>
+        <div class="stat-label">Total Sampel Data Air</div>
+      </div>
+    </div>
+
+    <div class="glass-card stat-card">
+      <div class="stat-icon blue">
+        <i class="fa-solid fa-vial"></i>
+      </div>
+      <div>
+        <div class="stat-val">{{ metrics.dataset.total_cols - 1 }} Fitur</div>
+        <div class="stat-label">Parameter Fisik & Kimiawi</div>
+      </div>
+    </div>
+
+    <div class="glass-card stat-card">
+      <div class="stat-icon emerald">
+        <i class="fa-solid fa-bullseye"></i>
+      </div>
+      <div>
+        <div class="stat-val">{{ metrics.decision_tree.accuracy }}%</div>
+        <div class="stat-label">Akurasi Decision Tree (holdout 80:20)</div>
+      </div>
+    </div>
+
+    <div class="glass-card stat-card">
+      <div class="stat-icon purple">
+        <i class="fa-solid fa-network-wired"></i>
+      </div>
+      <div>
+        <div class="stat-val">{{ metrics.multilayer_perceptron.accuracy }}%</div>
+        <div class="stat-label">Akurasi Multilayer Perceptron (MLP)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Test with Presets Section -->
+  <section class="section">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title"><i class="fa-solid fa-wand-magic-sparkles text-cyan" style="color: var(--primary);"></i> Uji Cepat dengan Contoh Nilai</h2>
+        <p class="section-subtitle">Pilih salah satu contoh nilai sintetis untuk mencoba klasifikasi; preset ini bukan hasil pengukuran sampel nyata.</p>
+      </div>
+      <a href="{{ url_for('predict') }}" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+        Form Kustom Lengkap <i class="fa-solid fa-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="grid-3">
+      {% for key, preset in presets.items() %}
+      <div class="glass-card preset-card" onclick="window.location.href='{{ url_for('predict') }}'">
+        <div class="preset-header">
+          {% if key == 'potable' %}
+            <i class="fa-solid fa-circle-check" style="color: var(--success); font-size: 1.2rem;"></i>
+          {% elif key == 'non_potable' %}
+            <i class="fa-solid fa-triangle-exclamation" style="color: var(--danger); font-size: 1.2rem;"></i>
+          {% else %}
+            <i class="fa-solid fa-faucet-drip" style="color: var(--primary); font-size: 1.2rem;"></i>
+          {% endif %}
+          <span>{{ preset.title }}</span>
+        </div>
+        <p class="preset-desc">{{ preset.desc }}</p>
+        <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.78rem; color: var(--text-dim);">pH: {{ preset['values']['ph'] }} &bull; Turbidity: {{ preset['values']['Turbidity'] }} NTU</span>
+          <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600;">Coba preset &rarr;</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Reference Journal Summary Card -->
+  <section class="section">
+    <div class="glass-card" style="border-left: 4px solid var(--primary);">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <span class="badge badge-info" style="margin-bottom: 0.5rem;">Artikel Jurnal Ilmiah Referensi Utama</span>
+          <h3 style="font-size: 1.35rem; color: var(--text-main); margin-top: 0.3rem;">
+            {{ metrics.journal_reference.title }}
+          </h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.3rem;">
+            Penulis: <strong>{{ metrics.journal_reference.authors }}</strong> &bull; <em>{{ metrics.journal_reference.journal }}</em> ({{ metrics.journal_reference.year }}), {{ metrics.journal_reference.volume }}
+          </p>
+        </div>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <a href="{{ metrics.journal_reference.doi }}" target="_blank" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 0.9rem;">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Tautan DOI Jurnal
+          </a>
+          <a href="{{ metrics.journal_reference.dataset_link }}" target="_blank" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 0.9rem;">
+            <i class="fa-brands fa-kaggle"></i> Sumber Dataset Kaggle
+          </a>
+        </div>
+      </div>
+      <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1rem; font-size: 0.88rem; color: #475569; line-height: 1.6;">
+        <i class="fa-solid fa-quote-left text-cyan" style="color: var(--primary); margin-right: 0.5rem;"></i>
+        Artikel menggunakan Decision Tree dan melaporkan evaluasi 5-fold dengan akurasi <strong>{{ metrics.journal_reference.accuracy }}%</strong>. Pada proyek ini, akurasi holdout Decision Tree adalah <strong>{{ metrics.decision_tree.accuracy }}%</strong>; angka holdout dan angka jurnal tidak dibandingkan langsung karena protokol evaluasinya berbeda. Evaluasi tambahan 5-fold proyek ditampilkan pada halaman evaluasi. Selisih skor tidak dengan sendirinya membuktikan bahwa preprocessing tertentu menyebabkan peningkatan.
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

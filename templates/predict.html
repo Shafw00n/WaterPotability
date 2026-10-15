@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Pengujian Data Baru - AquaSense AI{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Header -->
+  <div style="margin-bottom: 2rem;">
+    <h1 class="section-title"><i class="fa-solid fa-flask-vial" style="color: var(--primary);"></i> Pengujian Sampel Data Baru (Kriteria 5 UTS)</h1>
+    <p class="section-subtitle">
+      Masukkan 9 parameter kualitas air atau pilih contoh preset untuk melihat prediksi model. Nilai harus berada dalam rentang input yang ditampilkan.
+    </p>
+  </div>
+
+  <!-- One-Click Presets -->
+  <div class="section" style="margin-bottom: 2rem;">
+    <h3 style="font-size: 1.1rem; color: var(--text-main); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+      <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--primary);"></i> Pilih Contoh Nilai:
+    </h3>
+    <div class="grid-3">
+      {% for key, preset in presets.items() %}
+      <div class="preset-card" data-values='{{ preset["values"] | tojson }}'>
+        <div class="preset-header">
+          {% if key == 'potable' %}
+            <i class="fa-solid fa-circle-check" style="color: var(--success);"></i>
+          {% elif key == 'non_potable' %}
+            <i class="fa-solid fa-triangle-exclamation" style="color: var(--danger);"></i>
+          {% else %}
+            <i class="fa-solid fa-faucet-drip" style="color: var(--primary);"></i>
+          {% endif %}
+          <span>{{ preset.title }}</span>
+        </div>
+        <p class="preset-desc">{{ preset.desc }}</p>
+        <div style="margin-top: 0.8rem; font-size: 0.8rem; color: var(--primary); font-weight: 600;">
+          <i class="fa-solid fa-arrow-down"></i> Terapkan ke Form di Bawah
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Prediction Form & Result Grid -->
+  <div class="glass-card" id="prediction-form">
+    <form method="POST" action="{{ url_for('predict') }}">
+      {% if error %}
+      <div role="alert" style="margin-bottom: 1rem; padding: 0.85rem 1rem; border: 1px solid #fecdd3; border-radius: var(--radius-sm); background: #fff1f2; color: #9f1239;">
+        <i class="fa-solid fa-circle-exclamation"></i> {{ error }}
+      </div>
+      {% endif %}
+      <!-- Model Switcher Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+        <div>
+          <h3 style="color: var(--text-main); font-size: 1.25rem;">Form Parameter Kualitas Air</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Sesuaikan nilai menggunakan slider atau ketikkan angka langsung</p>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">Pilih Model Klasifikasi:</span>
+          <div class="model-switch">
+            <button type="button" class="model-option {% if model_choice == 'dt' %}active{% endif %}" data-model="dt">
+              <i class="fa-solid fa-tree"></i> Decision Tree
+            </button>
+            <button type="button" class="model-option {% if model_choice == 'mlp' %}active{% endif %}" data-model="mlp">
+              <i class="fa-solid fa-network-wired"></i> Multilayer Perceptron
+            </button>
+          </div>
+          <input type="hidden" name="model_choice" id="model_choice_input" value="{{ model_choice }}">
+        </div>
+      </div>
+
+      <!-- 9 Feature Input Controls -->
+      <div class="form-grid">
+        {% for col, info in feature_info.items() %}
+        <div class="form-group">
+          <div class="form-label-row">
+            <label class="form-label" for="input_{{ col }}">{{ info.name }}</label>
+            <span class="form-unit">{{ info.unit }}</span>
+          </div>
+
+          <div class="form-input-row">
+            <input type="range" 
+                   class="form-slider" 
+                   data-target="input_{{ col }}" 
+                   min="{{ info.min }}" 
+                   max="{{ info.max }}" 
+                   step="{{ info.step }}" 
+                   value="{{ input_values[col] }}">
+            
+            <input type="number" 
+                   class="form-control form-number" 
+                   id="input_{{ col }}" 
+                   name="{{ col }}" 
+                   min="{{ info.min }}" 
+                   max="{{ info.max }}" 
+                   step="any" 
+                   value="{{ input_values[col] }}" 
+                   required>
+          </div>
+
+          <div class="input-range-note">
+            Rentang input: {{ info.min }}–{{ info.max }} {{ info.unit }}
+          </div>
+          <div class="form-help">{{ info.desc }}</div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Submit Action -->
+      <div style="text-align: center; margin-top: 1rem;">
+        <button type="submit" class="btn btn-primary" style="padding: 0.9rem 2.5rem; font-size: 1.05rem;">
+          <i class="fa-solid fa-microchip"></i> Jalankan Klasifikasi Sampel Air
+        </button>
+      </div>
+    </form>
+
+    <!-- Prediction Result Output -->
+    {% if result %}
+    <div class="result-card {{ result.status_class }}" style="margin-top: 2.5rem;">
+      <div class="result-badge {{ result.status_class }}">
+        {% if result.prediction == 1 %}
+          <i class="fa-solid fa-circle-check"></i> {{ result.label }}
+        {% else %}
+          <i class="fa-solid fa-triangle-exclamation"></i> {{ result.label }}
+        {% endif %}
+      </div>
+
+      <div class="result-score" style="color: {% if result.prediction == 1 %}#15803d{% else %}#be123c{% endif %};">
+        {{ result.predicted_probability }}%
+        <span style="font-size: 1rem; font-weight: 500; color: var(--text-muted); display: block;">
+          Probabilitas keluaran model, belum dikalibrasi ({{ result.model_name }})
+        </span>
+      </div>
+
+      <!-- Probability Bar -->
+      <div class="prob-bar-container">
+        <div class="prob-bar-track">
+          <div class="prob-bar-fill-safe" style="width: {{ result.prob_potable }}%;"></div>
+          <div class="prob-bar-fill-unsafe" style="width: {{ result.prob_non_potable }}%;"></div>
+        </div>
+        <div class="prob-labels">
+          <span style="color: #15803d;"><i class="fa-solid fa-circle" style="font-size: 0.6rem;"></i> Potable: {{ result.prob_potable }}%</span>
+          <span style="color: #be123c;"><i class="fa-solid fa-circle" style="font-size: 0.6rem;"></i> Non-Potable: {{ result.prob_non_potable }}%</span>
+        </div>
+      </div>
+
+      <div style="max-width: 700px; margin: 1.5rem auto 0; text-align: left; background: #f8fafc; padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+        <h4 style="color: var(--text-main); font-size: 0.95rem; margin-bottom: 0.4rem;">
+          <i class="fa-solid fa-circle-info" style="color: var(--primary);"></i> Batas interpretasi
+        </h4>
+        <p style="font-size: 0.88rem; color: var(--text-muted);">
+          Ini adalah prediksi terhadap label pada dataset, bukan audit baku mutu WHO dan bukan jaminan bahwa air aman diminum. Skor probabilitas belum dikalibrasi; gunakan pengujian laboratorium dan standar yang berlaku untuk menilai keamanan air.
+        </p>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

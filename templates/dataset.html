@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Dataset & Preprocessing - AquaSense AI{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Header -->
+  <div style="margin-bottom: 2.5rem;">
+    <h1 class="section-title"><i class="fa-solid fa-database" style="color: var(--primary);"></i> Sumber & Karakteristik Dataset</h1>
+    <p class="section-subtitle">
+      Penjelasan sumber dan karakteristik dataset, prapemrosesan, serta pembagian data latih-uji.
+    </p>
+  </div>
+
+  <!-- Source & Overview Card -->
+  <div class="grid-2 section">
+    <div class="glass-card">
+      <h3 style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fa-solid fa-circle-info" style="color: var(--primary);"></i> Identitas Dataset
+      </h3>
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.92rem;">
+        <li style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem;">
+          <span style="color: var(--text-muted);">Nama Dataset:</span>
+          <strong style="color: var(--text-main);">Water Quality and Potability Dataset</strong>
+        </li>
+        <li style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem;">
+          <span style="color: var(--text-muted);">Sumber / Asal Data:</span>
+          <a href="https://www.kaggle.com/datasets/uom190346a/water-quality-and-potability" target="_blank" style="color: var(--primary); text-decoration: none;">
+            <i class="fa-brands fa-kaggle"></i> Kaggle Repository
+          </a>
+        </li>
+        <li style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem;">
+          <span style="color: var(--text-muted);">Total Baris Sampel:</span>
+          <strong style="color: var(--text-main);">{{ "{:,}".format(metrics.dataset.total_rows) }} Sampel Air</strong>
+        </li>
+        <li style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem;">
+          <span style="color: var(--text-muted);">Total Kolom Fitur:</span>
+          <strong style="color: var(--text-main);">9 Input Numerik + 1 Target Biner</strong>
+        </li>
+        <li style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem;">
+          <span style="color: var(--text-muted);">Format Berkas:</span>
+          <code style="background: #f1f5f9; padding: 0.15rem 0.4rem; border-radius: 4px;">water_potability.csv</code>
+        </li>
+      </ul>
+    </div>
+
+    <div class="glass-card">
+      <h3 style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fa-solid fa-chart-pie" style="color: var(--secondary);"></i> Distribusi Kelas Target (Potability)
+      </h3>
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.3rem;">
+            <span><i class="fa-solid fa-circle-xmark" style="color: var(--danger);"></i> Tidak Layak (Non-Potable / 0)</span>
+            <strong>{{ metrics.dataset.class_distribution['0'] }} ({{ metrics.dataset.class_percentages['0'] }}%)</strong>
+          </div>
+          <div style="height: 10px; background: #e2e8f0; border-radius: var(--radius-full); overflow: hidden;">
+            <div style="height: 100%; width: {{ metrics.dataset.class_percentages['0'] }}%; background: var(--danger);"></div>
+          </div>
+        </div>
+
+        <div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.3rem;">
+            <span><i class="fa-solid fa-circle-check" style="color: var(--success);"></i> Layak Minum (Potable / 1)</span>
+            <strong>{{ metrics.dataset.class_distribution['1'] }} ({{ metrics.dataset.class_percentages['1'] }}%)</strong>
+          </div>
+          <div style="height: 10px; background: #e2e8f0; border-radius: var(--radius-full); overflow: hidden;">
+            <div style="height: 100%; width: {{ metrics.dataset.class_percentages['1'] }}%; background: var(--success);"></div>
+          </div>
+        </div>
+
+        <div style="font-size: 0.85rem; color: var(--text-dim); background: #f8fafc; border: 1px solid var(--border-color); padding: 0.8rem; border-radius: var(--radius-sm); margin-top: 0.5rem;">
+          <i class="fa-solid fa-lightbulb" style="color: var(--warning);"></i> 
+          Distribusi data memiliki rasio ~61% : 39%. Pembagian data dilakukan dengan teknik <em>stratified splitting</em> agar proporsi kedua kelas tetap terjaga seimbang di data latih dan data uji.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preprocessing Section -->
+  <section class="section">
+    <div class="glass-card" style="border-top: 3px solid var(--accent);">
+      <h2 style="font-size: 1.4rem; color: var(--text-main); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.6rem;">
+        <i class="fa-solid fa-filter" style="color: var(--accent);"></i> Alur Preprocessing & Pembagian Data (Kriteria 2 UTS)
+      </h2>
+      <div class="grid-3" style="margin-top: 1rem;">
+        <div style="background: #f8fafc; padding: 1.2rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+          <div style="color: var(--accent); font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem;">1. Imputasi Nilai Hilang</div>
+          <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">
+            Ditemukan <em>missing values</em> pada kolom:
+            <br>&bull; <code>ph</code>: <strong>491</strong> baris
+            <br>&bull; <code>Sulfate</code>: <strong>781</strong> baris
+            <br>&bull; <code>Trihalomethanes</code>: <strong>162</strong> baris
+            <br>Nilai kosong diisi menggunakan nilai median data latih (<em>Median Imputation</em>) agar tahan terhadap <em>outliers</em>.
+          </p>
+        </div>
+
+        <div style="background: #f8fafc; padding: 1.2rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+          <div style="color: var(--primary); font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem;">2. Data Splitting (80:20)</div>
+          <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">
+            Data dibagi menjadi dua himpunan independen:
+            <br>&bull; <strong>Data Training (80%)</strong>: {{ "{:,}".format(metrics.dataset.train_count) }} baris untuk melatih model.
+            <br>&bull; <strong>Data Testing (20%)</strong>: {{ "{:,}".format(metrics.dataset.test_count) }} baris untuk evaluasi performa matriks konfusi murni tanpa kebocoran data.
+          </p>
+        </div>
+
+        <div style="background: #f8fafc; padding: 1.2rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+          <div style="color: var(--secondary); font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem;">3. Penskalaan Fitur (Scaling)</div>
+          <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">
+            Fitur numerik diskalakan menggunakan <code>StandardScaler</code> ($\mu=0, \sigma=1$) khusus untuk pelatihan model <strong>Multilayer Perceptron (MLP)</strong> agar fungsi aktivasi dan algoritma optimasi bobot (Adam Optimizer) bekerja optimal.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 Water Quality Parameters Table -->
+  <section class="section">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title"><i class="fa-solid fa-list-check" style="color: var(--primary);"></i> Karakteristik 9 Parameter Kualitas Air</h2>
+        <p class="section-subtitle">Nama, satuan pada dataset, dan arti umum setiap fitur. Nilai fitur bukan audit baku mutu atau penentu langsung kelayakan minum.</p>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table-custom">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama Parameter Fitur</th>
+            <th>Satuan</th>
+            <th>Deskripsi Fitur</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for col, info in feature_info.items() %}
+          <tr>
+            <td style="font-weight: 600; color: var(--primary);">{{ loop.index }}</td>
+            <td>
+              <strong>{{ info.name }}</strong>
+              <div style="font-size: 0.78rem; color: var(--text-dim);">Atribut: <code>{{ col }}</code></div>
+            </td>
+            <td><span class="badge badge-info">{{ info.unit }}</span></td>
+            <td style="font-size: 0.88rem; line-height: 1.5;">{{ info.desc }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Dataset Sample Preview Table -->
+  <section class="section">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title"><i class="fa-solid fa-table" style="color: var(--secondary);"></i> Cuplikan 15 Data Pertama</h2>
+        <p class="section-subtitle">Tampilan sampel data aktual dari berkas <code>water_potability.csv</code>:</p>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table-custom" style="font-size: 0.82rem;">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>pH</th>
+            <th>Hardness</th>
+            <th>Solids</th>
+            <th>Chloramines</th>
+            <th>Sulfate</th>
+            <th>Conductivity</th>
+            <th>Organic C</th>
+            <th>THM</th>
+            <th>Turbidity</th>
+            <th>Potability</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in preview_data %}
+          <tr>
+            <td style="color: var(--text-dim);">{{ loop.index }}</td>
+            <td>{{ row.ph }}</td>
+            <td>{{ row.Hardness }}</td>
+            <td>{{ row.Solids }}</td>
+            <td>{{ row.Chloramines }}</td>
+            <td>{{ row.Sulfate }}</td>
+            <td>{{ row.Conductivity }}</td>
+            <td>{{ row.Organic_carbon }}</td>
+            <td>{{ row.Trihalomethanes }}</td>
+            <td>{{ row.Turbidity }}</td>
+            <td>
+              {% if row.Potability == 1 %}
+                <span class="badge badge-success">Layak (1)</span>
+              {% else %}
+                <span class="badge badge-danger">Tidak Layak (0)</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+{% endblock %}

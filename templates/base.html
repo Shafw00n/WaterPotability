@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Klasifikasi Kelayakan Air Minum - UTS Kecerdasan Buatan{% endblock %}</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-wrapper">
+      <a href="{{ url_for('index') }}" class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-droplet text-white"></i>
+        </div>
+        <div>
+          <span>AquaSense AI</span>
+          <span class="brand-badge">UTS 2026</span>
+        </div>
+      </a>
+      
+      <ul class="nav-links">
+        <li>
+          <a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">
+            <i class="fa-solid fa-house"></i> Beranda
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('dataset') }}" class="nav-link {% if request.endpoint == 'dataset' %}active{% endif %}">
+            <i class="fa-solid fa-database"></i> Dataset & Fitur
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('evaluasi') }}" class="nav-link {% if request.endpoint == 'evaluasi' %}active{% endif %}">
+            <i class="fa-solid fa-chart-pie"></i> Evaluasi & Jurnal
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('predict') }}" class="nav-link nav-cta {% if request.endpoint == 'predict' %}active{% endif %}">
+            <i class="fa-solid fa-flask-vial"></i> Uji Data Baru
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-info">
+        <h4>Proyek UTS Kecerdasan Buatan (Genap 2026/2027)</h4>
+        <p>Topik: Klasifikasi Kelayakan Air Minum menggunakan Decision Tree & Multilayer Perceptron.</p>
+        <p style="margin-top: 0.2rem; font-size: 0.8rem; color: var(--text-dim);">
+          Referensi Ilmiah: <em>Umar Zaky et al. (IJODAS, 2023)</em> &bull; Sumber Dataset: <em>Kaggle Water Quality</em>
+        </p>
+      </div>
+      <div class="footer-links">
+        <span class="badge badge-info"><i class="fa-solid fa-code"></i> Flask Framework</span>
+        <span class="badge badge-success"><i class="fa-solid fa-brain"></i> Decision Tree & MLP</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
