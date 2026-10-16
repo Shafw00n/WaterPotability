@@ -83,48 +83,48 @@ FEATURE_INFO = {
 
 PRESETS = {
     'potable': {
-        'title': 'Air Pegunungan Segar (Layak Minum)',
-        'desc': 'Skenario nilai sintetis dengan pH netral dan parameter yang disusun sebagai contoh pengujian.',
+        'title': 'Sampel Air Layak Minum (Potable)',
+        'desc': 'Data aktual dari dataset (index 1186) — kedua model memprediksi Potable dengan keyakinan tinggi.',
         'values': {
-            'ph': 7.2,
-            'Hardness': 180.5,
-            'Solids': 14200.0,
-            'Chloramines': 6.8,
-            'Sulfate': 310.0,
-            'Conductivity': 395.0,
-            'Organic_carbon': 11.2,
-            'Trihalomethanes': 62.0,
-            'Turbidity': 3.4
+            'ph': 9.48,
+            'Hardness': 122.91,
+            'Solids': 56351.4,
+            'Chloramines': 4.22,
+            'Sulfate': 219.55,
+            'Conductivity': 480.85,
+            'Organic_carbon': 13.53,
+            'Trihalomethanes': 41.73,
+            'Turbidity': 4.13
         }
     },
     'non_potable': {
-        'title': 'Limbah Air Keruh / Asam (Tidak Layak)',
-        'desc': 'Skenario nilai sintetis dengan pH asam, padatan terlarut tinggi, dan kekeruhan tinggi.',
+        'title': 'Sampel Air Tidak Layak (Non-Potable)',
+        'desc': 'Data aktual dari dataset (index 76) — kedua model memprediksi Non-Potable dengan keyakinan tinggi.',
         'values': {
-            'ph': 4.2,
-            'Hardness': 245.0,
-            'Solids': 38500.0,
-            'Chloramines': 10.5,
-            'Sulfate': 440.0,
-            'Conductivity': 680.0,
-            'Organic_carbon': 23.5,
-            'Trihalomethanes': 95.0,
-            'Turbidity': 5.8
+            'ph': 3.51,
+            'Hardness': 158.73,
+            'Solids': 23029.66,
+            'Chloramines': 6.82,
+            'Sulfate': 286.52,
+            'Conductivity': 307.38,
+            'Organic_carbon': 9.71,
+            'Trihalomethanes': 79.85,
+            'Turbidity': 3.76
         }
     },
     'standard_pam': {
-        'title': 'Air Olahan PAM Siap Uji',
-        'desc': 'Skenario nilai sintetis yang menyerupai contoh parameter air olahan untuk demonstrasi form.',
+        'title': 'Sampel Air Olahan Layak Minum',
+        'desc': 'Data aktual dari dataset (index 1566) — pH netral, kedua model memprediksi Potable.',
         'values': {
-            'ph': 7.8,
-            'Hardness': 195.0,
-            'Solids': 19800.0,
-            'Chloramines': 7.2,
-            'Sulfate': 335.0,
-            'Conductivity': 420.0,
-            'Organic_carbon': 14.1,
-            'Trihalomethanes': 68.0,
-            'Turbidity': 3.9
+            'ph': 7.7,
+            'Hardness': 121.58,
+            'Solids': 16978.93,
+            'Chloramines': 6.81,
+            'Sulfate': 354.25,
+            'Conductivity': 368.22,
+            'Organic_carbon': 13.0,
+            'Trihalomethanes': 69.26,
+            'Turbidity': 3.4
         }
     }
 }
